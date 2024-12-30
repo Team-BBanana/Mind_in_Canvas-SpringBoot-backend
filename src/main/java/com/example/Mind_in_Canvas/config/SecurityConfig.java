@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/login**", "/error**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 // .formLogin(formLogin -> formLogin
                 //         .loginPage("/users/login") // 사용자 정의 로그인 페이지 경로

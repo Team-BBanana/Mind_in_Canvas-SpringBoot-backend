@@ -36,7 +36,7 @@ public class Kid {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Kid(User parent, String kidName, int kidAge) {
+    public Kid(User parent, String kidName, Integer kidAge) {
         // 엄마 등록
         this.parent = parent;
         this.name = kidName;

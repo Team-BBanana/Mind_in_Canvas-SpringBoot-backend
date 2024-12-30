@@ -2,8 +2,6 @@ package com.example.Mind_in_Canvas.domain.canvas;
 
 import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.shared.ApiResponse;
-import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
-import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
