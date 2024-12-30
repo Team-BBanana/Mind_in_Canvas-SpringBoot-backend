@@ -81,13 +81,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        response.sendRedirect("http://localhost:5173/");
-
-//        response.sendRedirect("https://ohmolli.com:9100/swagger-ui/index.html");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK); // 302 OK
 
         // 인증 성공 시의 로직
-//        response.getWriter().write("{\"message\":\"Credential Authentication Success\", " +
-//                "\"user\":\"" + obtainUsername(request) + "\"}");
+       response.getWriter().write("{\"message\":\"Credential Authentication Success\", " +
+               "\"user\":\"" + obtainUsername(request) + "\"}");
     }
 
     @Override

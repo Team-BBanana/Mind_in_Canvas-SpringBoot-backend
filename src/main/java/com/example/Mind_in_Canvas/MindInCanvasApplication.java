@@ -10,5 +10,13 @@ public class MindInCanvasApplication {
 		SpringApplication.run(MindInCanvasApplication.class, args);
 	}
 
+
 }
+
+
+
+
+
+
+
 
