@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/users/register").permitAll()
+                        .requestMatchers("/users/signup").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/login**", "/error**").permitAll()// /error 경로는 누구나 접근 가능
                         .anyRequest().authenticated()
