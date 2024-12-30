@@ -4,7 +4,6 @@ import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.shared.ApiResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,13 +13,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/canvas")
@@ -80,18 +77,20 @@ public class CanvasController {
         return requestBody;
     }
 
-    @GetMapping("/{canvasId}")
-    public ApiResponse<ContinueDrawingResponse> continueCanvas(
+    // 배경에 이어그리기
+    @GetMapping("/makefriend/{canvasId}")
+    public ResponseEntity<MakeFriendResponse> makeFriend(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam UUID imageId
+            @PathVariable UUID canvasId
     ) {
         try {
-            // 캔버스 정보를 가져오는 서비스 호출
-            ContinueDrawingResponse response = canvasService.continueCanvas(imageId);
-            return ApiResponse.success(response);
+            MakeFriendResponse response = canvasService.makeFriend(canvasId);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("캔버스 불러오기 실패: ", e);
-            return ApiResponse.error("CANVAS_CONTINUE_FAILED", e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 

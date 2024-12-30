@@ -1,9 +1,13 @@
 package com.example.Mind_in_Canvas.domain.canvas;
 
+import com.example.Mind_in_Canvas.domain.gallery.drawing.DrawingRepository;
+import com.example.Mind_in_Canvas.domain.gallery.image.Image;
+import com.example.Mind_in_Canvas.domain.gallery.image.ImageRepository;
 import com.example.Mind_in_Canvas.domain.user.kid.Kid;
 import com.example.Mind_in_Canvas.domain.user.kid.KidRepository;
 import com.example.Mind_in_Canvas.domain.user.parent.User;
 import com.example.Mind_in_Canvas.dto.canvas.*;
+import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,15 +29,18 @@ public class CanvasService {
     private final CanvasRepository canvasRepository;
     private final KidRepository kidRepository;
     private final WebClient webClient;
+    private final DrawingRepository drawingRepository;
+    private final ImageRepository imageRepository;
 
     @Value("${AI_SERVER_URL}")
     private String aiServerUrl;
 
-    public CanvasService(CanvasRepository canvasRepository, KidRepository kidRepository, WebClient webClient) {
+    public CanvasService(CanvasRepository canvasRepository, KidRepository kidRepository, WebClient webClient, DrawingRepository drawingRepository, ImageRepository imageRepository) {
         this.canvasRepository = canvasRepository;
         this.kidRepository = kidRepository;
         this.webClient = webClient;
-
+        this.drawingRepository = drawingRepository;
+        this.imageRepository = imageRepository;
     }
 
     // 새 캔버스에 그림 그리기
@@ -81,9 +86,23 @@ public class CanvasService {
         }
     }
 
-    public ContinueDrawingResponse continueCanvas(UUID canvasId) {
-        String imageUrl = canvasRepository.findImageUrlByCanvasId(canvasId);
-        return new ContinueDrawingResponse(imageUrl);
+    public MakeFriendResponse makeFriend(UUID canvasId) {
+        Image backgroundImage = canvasRepository.findImageByCanvasId(canvasId);
+
+        List<DrawingResponse> drawings = drawingRepository.findAllByImageImageId(backgroundImage.getImageId())
+                .stream()
+                .map(drawing -> DrawingResponse.builder()
+                        .positionX(drawing.getPositionX())
+                        .positionY(drawing.getPositionY())
+                        .originalImageUrl(drawing.getOriginalImage())
+                        .build())
+                .toList();
+
+        return MakeFriendResponse.builder()
+                .canvasId(canvasId)
+                .backgroundImageUrl(backgroundImage.getImageUrl())
+                .drawings(drawings)
+                .build();
     }
 
     public Mono<ResponseEntity<AnalyzeDrawingResponse>> sendToAiServer(AnalyzeDrawingRequest requestBody) {

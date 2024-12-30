@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ImageRepository extends JpaRepository<Image, UUID> {
     String findImageUrlByImageId(@Param("imageId") UUID ImageId);
     Image findImageByImageId(UUID imageId);
+    Image findImageByImageUrl(String imageUrl);
 }
