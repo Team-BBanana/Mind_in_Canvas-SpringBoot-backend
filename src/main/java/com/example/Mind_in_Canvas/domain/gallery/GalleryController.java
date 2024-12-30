@@ -2,10 +2,7 @@ package com.example.Mind_in_Canvas.domain.gallery;
 
 import com.example.Mind_in_Canvas.dto.gallery.GalleryResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -19,9 +16,13 @@ public class GalleryController {
         this.galleryService = galleryService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<GalleryResponse> getImage(@RequestParam UUID imageId) {
+    @GetMapping("/{imageId}")
+    public ResponseEntity<GalleryResponse> getImage(@PathVariable UUID imageId) {
         return ResponseEntity.ok(galleryService.getImage(imageId));
     }
 
+    @PatchMapping("/{imageId}")
+    public ResponseEntity<String> hideImage(@PathVariable UUID imageId) {
+        return galleryService.hideImage(imageId);
+    }
 }
