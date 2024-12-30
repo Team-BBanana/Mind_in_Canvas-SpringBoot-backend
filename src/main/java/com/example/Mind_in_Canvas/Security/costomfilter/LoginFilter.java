@@ -37,7 +37,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = obtainUsername(request);
         String password = obtainPassword(request);
 
-        System.out.println("로그인 필터 : " + username);
+        System.out.println("로그인 필터 아이디 : " + username);
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 
@@ -81,7 +81,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        response.sendRedirect("http://localhost:62885/canvas");
+        response.sendRedirect("http://localhost:5173/");
 
 //        response.sendRedirect("https://ohmolli.com:9100/swagger-ui/index.html");
 

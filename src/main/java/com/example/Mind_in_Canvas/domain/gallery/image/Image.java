@@ -2,7 +2,6 @@ package com.example.Mind_in_Canvas.domain.gallery.image;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
