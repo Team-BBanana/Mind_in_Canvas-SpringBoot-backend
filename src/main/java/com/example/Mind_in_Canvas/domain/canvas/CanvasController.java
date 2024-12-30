@@ -22,29 +22,33 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/canvas")
-@RequiredArgsConstructor
 @Slf4j
 public class CanvasController {
 
     private final CanvasService canvasService;
-    private final RestTemplate restTemplate;
+
+    public CanvasController(CanvasService canvasService) {
+        this.canvasService = canvasService;
+    }
 
     @Value("${AI_SERVER_URL}")
     private String aiServerUrl;
 
-    @GetMapping("/new")
-    //프론트 에서 캔버스 생성 요청 받아서 캔버스 생성 
-    public ApiResponse<CreateCanvasResponse> createCanvas(
+    //프론트 에서 캔버스 생성 요청 받아서 캔버스 생성
+    @PostMapping("/new/{kidId}")
+    public ResponseEntity<CreateCanvasResponse> createCanvas(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam UUID kidId
+            @PathVariable UUID kidId
     ) {
         log.info("Create new canvas request for kidId: {}", kidId);
         try {
             CreateCanvasResponse response = canvasService.createCanvas(kidId);
-            return ApiResponse.success(response);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to create canvas: ", e);
-            return ApiResponse.error("CANVAS_CREATE_FAILED", e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 

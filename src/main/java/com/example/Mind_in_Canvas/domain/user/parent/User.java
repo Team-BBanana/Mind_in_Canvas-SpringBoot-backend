@@ -40,6 +40,10 @@ public class User {
     private LocalDateTime updatedAt;
     private String phoneNumber; // 전화번호
 
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID robotId;
+
 
     // 계정 상태 필드
     private boolean enabled; // 계정 활성화 여부

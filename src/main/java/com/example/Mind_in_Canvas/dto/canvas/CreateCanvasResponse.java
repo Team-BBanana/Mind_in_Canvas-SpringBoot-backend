@@ -10,15 +10,9 @@ import java.util.UUID;
 @Getter
 @Builder
 public class CreateCanvasResponse {
+
     private UUID canvasId;
     private String status;
     private LocalDateTime createdAt;
 
-    public static CreateCanvasResponse from(Canvas canvas) {
-        return CreateCanvasResponse.builder()
-                .canvasId(canvas.getCanvasId())
-                .status(canvas.getStatus().name())
-                .createdAt(canvas.getCreatedAt())
-                .build();
-    }
 }
