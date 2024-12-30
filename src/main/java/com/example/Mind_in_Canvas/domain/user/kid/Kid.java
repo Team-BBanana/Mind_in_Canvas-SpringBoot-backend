@@ -2,6 +2,7 @@ package com.example.Mind_in_Canvas.domain.user.kid;
 
 import com.example.Mind_in_Canvas.domain.user.parent.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,5 +53,15 @@ public class Kid {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Builder
+    public Kid(UUID kidId, User parent, String name, Integer age, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.kidId = kidId;
+        this.parent = parent;
+        this.name = name;
+        this.age = age;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

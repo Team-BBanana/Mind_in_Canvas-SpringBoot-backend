@@ -1,16 +1,19 @@
 package com.example.Mind_in_Canvas.domain.user.parent;
+
+import com.example.Mind_in_Canvas.domain.user.kid.Kid;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "parent")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class User {
@@ -40,7 +43,7 @@ public class User {
     private LocalDateTime updatedAt;
     private String phoneNumber; // 전화번호
 
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+    //    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "BINARY(16)")
     private UUID robotId;
 
@@ -51,6 +54,13 @@ public class User {
     private boolean accountNonLocked; // 계정 잠금 여부
     private boolean credentialsNonExpired; // 자격 증명(비밀번호) 만료 여부
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<Kid> kids = new ArrayList<>();
+
+    public void addKid(Kid kid) {
+        kids.add(kid);
+        kid.setParent(this);
+    }
 
     // 엔티티가 처음 생성될 때 createdAt과 updatedAt을 설정
     @PrePersist
@@ -107,6 +117,23 @@ public class User {
         this.username = username;
     }
 
+    @Builder
+    public User(UUID parentId, String username, String email, String password, String role, String socialProvider, LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber, UUID robotId, boolean enabled, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired) {
+        this.parentId = parentId;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.socialProvider = socialProvider;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.phoneNumber = phoneNumber;
+        this.robotId = robotId;
+        this.enabled = enabled;
+        this.accountNonExpired = accountNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
 }
 
 
