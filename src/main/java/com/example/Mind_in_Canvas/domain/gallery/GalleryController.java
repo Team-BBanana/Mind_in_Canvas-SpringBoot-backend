@@ -33,7 +33,7 @@ public class GalleryController {
         return galleryService.hideImage(imageId);
     }
 
-    @PostMapping("/{imageId}/ai")
+    @PostMapping("/{drawingId}/ai")
     public ResponseEntity<AiEnhancementResponse> getEnhancedImage(
             @PathVariable UUID drawingId,
             @AuthenticationPrincipal UserDetails userDetails) {

@@ -81,9 +81,9 @@ public class CanvasService {
         return new ContinueDrawingResponse(imageUrl);
     }
 
-    public AnalyzeDrawingResponse analyzeDrawing(AnalyzeDrawingRequest request) {
-        // AI 서버와 통신하여 분석 결과를 받아오는 로직 추가
-        String aiServerUrl = "AI_SERVER_URL/analyze"; // 실제 URL로 변경 필요
-        return restTemplate.postForObject(aiServerUrl, request, AnalyzeDrawingResponse.class);
-    }
+    // public AnalyzeDrawingResponse analyzeDrawing(AnalyzeDrawingRequest request) {
+    //     // AI 서버와 통신하여 분석 결과를 받아오는 로직 추가
+    //     String aiServerUrl = "AI_SERVER_URL/analyze"; // 실제 URL로 변경 필요
+    //     return restTemplate.postForObject(aiServerUrl, request, AnalyzeDrawingResponse.class);
+    // }
 }

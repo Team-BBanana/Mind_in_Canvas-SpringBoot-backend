@@ -29,8 +29,7 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${frontend.url}")
-    private String frontendUrl;
+    private String frontendUrl = "http://localhost:5173/selectkids";
 
     // Constructor injection
     public CustomOauthSuccessHandler(UserDetailsService userDetailService, JwtTokenProvider jwtTokenProvider) {
@@ -68,18 +67,16 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
 
             // JWT를 쿠키에 저장
             Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(false);
+            cookie.setHttpOnly(true); // 보안상 true로 설정하는 것이 좋음
+            cookie.setSecure(false);    // HTTPS에서만 사용하도록 설정하려면 true로 설정
             cookie.setPath("/");
             response.addCookie(cookie);
-
+    
             response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.sendRedirect(frontendUrl + "/canvas");
-
-
-//            response.getWriter().write("{\"message\":\"Social Authentication Success\", " +
-//                    "\"user\":\"" + userDetails.getUsername() + "\"}");
+            response.setStatus(HttpServletResponse.SC_OK); // 302 OK
+            System.out.println("프론트엔드 루트 URL로 리디렉션 : " + frontendUrl);
+            // 프론트엔드 루트 URL로 리디렉션
+            response.sendRedirect(frontendUrl);
 
         }catch (UsernameNotFoundException ex){
             handleException(response, ex.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
