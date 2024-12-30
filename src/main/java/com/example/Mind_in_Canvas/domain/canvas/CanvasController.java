@@ -4,6 +4,7 @@ import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.shared.ApiResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
+import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,21 +55,17 @@ public class CanvasController {
 
     // 일정시간 입력 없을 시 AI 그림 분석 요청 (비동기처리)
     @PostMapping("/analyze/{canvasId}")
-    public Mono<ResponseEntity<AnalyzeDrawingResponse>> analyzeDrawing(
+    public ResponseEntity<Void> analyzeDrawing(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable UUID canvasId,
-            @RequestBody AnalyzeDrawingRequest request
-    ) throws BadRequestException {
-        if (!StringUtils.hasText(request.getBase64Img())) {
-            throw new BadRequestException("이미지 데이터가 없습니다.");
+            @RequestBody String base64image
+    ) {
+        if (!StringUtils.hasText(base64image)) {
+            throw new ResourceNotFoundException("이미지 데이터가 없습니다.");
         }
 
-        return canvasService.sendToAiServer(canvasService.analyzeDrawingRequestBody(request))
-                .map(responseEntity -> ResponseEntity.ok(responseEntity.getBody()))
-                .onErrorResume(e -> {
-                    log.error("AI 서버 통신 오류: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
-                });
+        canvasService.analyzeDrawingRequest(canvasId, base64image);
+        return ResponseEntity.ok().build();
     }
 
 

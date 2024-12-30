@@ -40,7 +40,7 @@ public class User {
     private LocalDateTime updatedAt;
     private String phoneNumber; // 전화번호
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "BINARY(16)")
     private UUID robotId;
 

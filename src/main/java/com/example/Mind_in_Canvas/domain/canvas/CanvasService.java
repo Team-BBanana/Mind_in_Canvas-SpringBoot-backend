@@ -11,6 +11,8 @@ import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
+import com.example.Mind_in_Canvas.webSocket.DrawingWebSocketHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -20,11 +22,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CanvasService {
 
     private final CanvasRepository canvasRepository;
@@ -32,17 +34,10 @@ public class CanvasService {
     private final WebClient webClient;
     private final DrawingRepository drawingRepository;
     private final ImageRepository imageRepository;
+    private final DrawingWebSocketHandler drawingWebSocketHandler;
 
     @Value("${AI_SERVER_URL}")
     private String aiServerUrl;
-
-    public CanvasService(CanvasRepository canvasRepository, KidRepository kidRepository, WebClient webClient, DrawingRepository drawingRepository, ImageRepository imageRepository) {
-        this.canvasRepository = canvasRepository;
-        this.kidRepository = kidRepository;
-        this.webClient = webClient;
-        this.drawingRepository = drawingRepository;
-        this.imageRepository = imageRepository;
-    }
 
     // 새 캔버스에 그림 그리기
     @Transactional
@@ -105,35 +100,13 @@ public class CanvasService {
                 .build();
     }
 
-    public Mono<ResponseEntity<AnalyzeDrawingResponse>> sendToAiServer(AnalyzeDrawingRequest requestBody) {
-        return webClient.post()
-                .uri("/analyze")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(AnalyzeDrawingResponse.class)
-                .map(ResponseEntity::ok)
-                .onErrorResume(error -> {
-                    if (error instanceof WebClientResponseException) {
-                        log.error("AI 서버 통신 오류: {}", error.getMessage(), error);
-                    } else {
-                        log.error("예상치 못한 오류: {}", error.getMessage(), error);
-                    }
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
-                });
-    }
+    public void analyzeDrawingRequest(UUID canvasId, String base64Img) {
+        AnalyzeDrawingRequest message = AnalyzeDrawingRequest.builder()
+                .canvasId(canvasId)
+                .base64Img(base64Img)
+                .build();
 
-    public GenerateBackgroundRequest generateBackgroundRequestBody(UUID canvasId, String originalDrawing) {
-        GenerateBackgroundRequest requestBody = new GenerateBackgroundRequest();
-        requestBody.setOriginalDrawing(originalDrawing);
-        requestBody.setCanvasId(canvasId);
-        return requestBody;
-    }
-
-    public AnalyzeDrawingRequest analyzeDrawingRequestBody(AnalyzeDrawingRequest request) {
-        AnalyzeDrawingRequest requestBody = new AnalyzeDrawingRequest();
-        requestBody.setBase64Img(request.getBase64Img());
-        return requestBody;
+        drawingWebSocketHandler.sendMessage(message);
     }
 
     public GenerateBackgroundResponse makeBackgroundRequest(UUID canvasId, String originalDrawing) {
