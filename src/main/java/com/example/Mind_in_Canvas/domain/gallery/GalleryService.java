@@ -1,8 +1,10 @@
 package com.example.Mind_in_Canvas.domain.gallery;
 
+import com.example.Mind_in_Canvas.domain.gallery.drawing.Drawing;
 import com.example.Mind_in_Canvas.domain.gallery.drawing.DrawingRepository;
 import com.example.Mind_in_Canvas.domain.gallery.image.Image;
 import com.example.Mind_in_Canvas.domain.gallery.image.ImageRepository;
+import com.example.Mind_in_Canvas.dto.gallery.AiEnhancementResponse;
 import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.dto.gallery.GalleryResponse;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +59,33 @@ public class GalleryService {
         } catch (Exception e) {
             throw new RuntimeException("delete failed", e);
         }
+    }
+
+    // <멋있게 만들기> 버튼 누르면 프론트단에서 '어떤 친구를 멋있게 할까요?' 하고 선택하게 해야함
+    public AiEnhancementResponse getEnhancedImage(UUID drawingId) {
+
+        String originalImageUrl = drawingRepository.findOriginalImageByDrawingId(drawingId);
+        Drawing drawing = drawingRepository.findByDrawingId(drawingId);
+        String enhancedImageUrl;
+        try {
+            // AI 서버에 이미지 처리 요청  -- 구현 필요
+            enhancedImageUrl = requestEnhancedImageFromAI(originalImageUrl);
+        } catch (Exception e) {
+            throw new RuntimeException("AI 이미지 생성 실패");
+        }
+
+        drawing.setFinalImage(enhancedImageUrl);
+        drawingRepository.save(drawing);
+
+        return AiEnhancementResponse.builder()
+                .DrawingId(drawingId)
+                .positionX(drawing.getPositionX())
+                .positionY(drawing.getPositionY())
+                .newImageUrl(enhancedImageUrl)
+                .build();
+    }
+
+    private String requestEnhancedImageFromAI(String originalImageUrl) {
+        return "추후 구현";
     }
 }

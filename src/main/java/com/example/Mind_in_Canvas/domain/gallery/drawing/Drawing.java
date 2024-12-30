@@ -47,4 +47,8 @@ public class Drawing {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    public void setFinalImage(String enhancedImageUrl) {
+        this.finalImage = enhancedImageUrl;
+    }
 }
