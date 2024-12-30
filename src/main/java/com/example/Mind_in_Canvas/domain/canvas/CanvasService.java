@@ -9,6 +9,7 @@ import com.example.Mind_in_Canvas.domain.user.parent.User;
 import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
+import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -76,7 +77,6 @@ public class CanvasService {
             }
 
             Canvas canvas = Canvas.createCanvas(kid);
-            
             canvasRepository.save(canvas);
             return response;
 
@@ -120,6 +120,59 @@ public class CanvasService {
                         log.error("예상치 못한 오류: {}", error.getMessage(), error);
                     }
                     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                });
+    }
+
+    public GenerateBackgroundRequest generateBackgroundRequestBody(UUID canvasId, String originalDrawing) {
+        GenerateBackgroundRequest requestBody = new GenerateBackgroundRequest();
+        requestBody.setOriginalDrawing(originalDrawing);
+        requestBody.setCanvasId(canvasId);
+        return requestBody;
+    }
+
+    public AnalyzeDrawingRequest analyzeDrawingRequestBody(AnalyzeDrawingRequest request) {
+        AnalyzeDrawingRequest requestBody = new AnalyzeDrawingRequest();
+        requestBody.setBase64Img(request.getBase64Img());
+        return requestBody;
+    }
+
+    public GenerateBackgroundResponse makeBackgroundRequest(UUID canvasId, String originalDrawing) {
+        try {
+            // AI 서버에 배경 생성 요청 보내기
+            GenerateBackgroundResponse aiResponse = sendGenerateBackgroundRequest(originalDrawing)
+                    .block();
+            Image image = Image.createImage(aiResponse.getBackgroundImage(), aiResponse.getImageAnalysis());
+            imageRepository.save(image);
+
+            return GenerateBackgroundResponse.builder()
+                    .imageAnalysis(aiResponse.getImageAnalysis())
+                    .summary(aiResponse.getSummary())
+                    .contents(aiResponse.getContents())
+                    .backgroundImage(aiResponse.getBackgroundImage())
+                    .drawingName(aiResponse.getDrawingName())
+                    .build();
+
+        } catch (Exception e) {
+            log.error("AI 배경 생성 또는 저장 실패: ", e);
+            throw new RuntimeException("AI 배경 생성 처리 중 오류가 발생했습니다.");
+        }
+    }
+
+    // AI 배경 생성 요청
+    private Mono<GenerateBackgroundResponse> sendGenerateBackgroundRequest(String originalDrawing) {
+        return webClient.post()
+                .uri("/generate-background")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(originalDrawing)
+                .retrieve()
+                .bodyToMono(GenerateBackgroundResponse.class)
+                .onErrorMap(error -> {
+                    if (error instanceof WebClientResponseException) {
+                        log.error("AI 서버 통신 오류: {}", error.getMessage(), error);
+                        return new ExternalServerException("AI 서버와 통신 중 오류가 발생했습니다.");
+                    }
+                    log.error("예상치 못한 오류: {}", error.getMessage(), error);
+                    return new InternalServerException("서비스 처리 중 오류가 발생했습니다.");
                 });
     }
 

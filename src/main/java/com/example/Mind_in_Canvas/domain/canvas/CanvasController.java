@@ -63,7 +63,7 @@ public class CanvasController {
             throw new BadRequestException("이미지 데이터가 없습니다.");
         }
 
-        return canvasService.sendToAiServer(createRequestBody(request))
+        return canvasService.sendToAiServer(canvasService.analyzeDrawingRequestBody(request))
                 .map(responseEntity -> ResponseEntity.ok(responseEntity.getBody()))
                 .onErrorResume(e -> {
                     log.error("AI 서버 통신 오류: {}", e.getMessage());
@@ -71,11 +71,6 @@ public class CanvasController {
                 });
     }
 
-    private AnalyzeDrawingRequest createRequestBody(AnalyzeDrawingRequest request) {
-        AnalyzeDrawingRequest requestBody = new AnalyzeDrawingRequest();
-        requestBody.setBase64Img(request.getBase64Img());
-        return requestBody;
-    }
 
     // 배경에 이어그리기
     @GetMapping("/makefriend/{canvasId}")
@@ -95,36 +90,12 @@ public class CanvasController {
     }
 
     @PostMapping("/done")
-    public ApiResponse<CompleteDrawingResponse> doneCanvas(
+    public ResponseEntity<GenerateBackgroundResponse> doneCanvas(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam UUID canvasId,
-            @RequestBody(required = true) String original_drawing
+            @PathVariable UUID canvasId,
+            @RequestBody(required = true) String originalDrawing
     ) {
-        // HTTP 요청 엔티티 생성
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("original_drawing", original_drawing);
-        requestBody.put("canvasId", canvasId.toString());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        try {
-            // ai 서버로 요청 보내기
-            ResponseEntity<CompleteDrawingResponse> response = restTemplate.exchange(
-                    aiServerUrl + "/generate-background", // 파이썬 서버 엔드포인트
-                    HttpMethod.POST,
-                    requestEntity,
-                    CompleteDrawingResponse.class
-            );
-            return ApiResponse.success(response.getBody());
-        } catch (HttpClientErrorException e) {
-            log.error("AI 서버 통신 오류", e);
-            throw new ExternalServerException("AI 서버와 통신 중 오류가 발생했습니다.");
-        } catch (Exception e) {
-            log.error("예상치 못한 오류", e);
-            throw new InternalServerException("서비스 처리 중 오류가 발생했습니다.");
-        }
+        return ResponseEntity.ok(canvasService.makeBackgroundRequest(canvasId, originalDrawing));
     }
 
 }
