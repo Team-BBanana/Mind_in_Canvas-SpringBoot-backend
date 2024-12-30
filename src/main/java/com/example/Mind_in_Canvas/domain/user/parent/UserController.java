@@ -1,11 +1,13 @@
 package com.example.Mind_in_Canvas.domain.user.parent;
 
-import com.example.Mind_in_Canvas.dto.UserDTO;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.Mind_in_Canvas.dto.user.UserDTO;
 
 import java.util.HashMap;
 import java.util.Map;

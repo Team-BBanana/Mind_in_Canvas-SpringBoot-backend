@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Mind_in_Canvas.dto.ErrorResponse;
-import com.example.Mind_in_Canvas.dto.KidDTO;
+import com.example.Mind_in_Canvas.dto.user.KidDTO;
 
 import jakarta.validation.Valid;
 
