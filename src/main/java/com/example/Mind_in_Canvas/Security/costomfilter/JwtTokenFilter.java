@@ -33,7 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if ("/login".equals(path) || "/auth/login".equals(path)) {
+        if ("/login".equals(path) || "/auth/login".equals(path) || "/swagger-ui.html".equals(path) || "/swagger-ui/**".equals(path) || "/v3/api-docs/**".equals(path)) {
             filterChain.doFilter(request, response);
             return;
         }
