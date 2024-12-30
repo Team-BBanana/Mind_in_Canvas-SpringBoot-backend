@@ -26,7 +26,7 @@ public class UserController {
 
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody UserDTO userDTO) {
 
         try {
