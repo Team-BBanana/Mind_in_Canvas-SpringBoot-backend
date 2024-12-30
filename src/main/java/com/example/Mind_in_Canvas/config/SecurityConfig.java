@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,14 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -45,18 +41,6 @@ public class SecurityConfig {
     private CustomOidcLogoutSuccessHandler customOidcLogoutSuccessHandler;
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration, JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
@@ -67,18 +51,17 @@ public class SecurityConfig {
         http
                 .securityMatcher("/**")
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않음
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 활성화 및 설정
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/register").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/login**", "/error**").permitAll()// /error 경로는 누구나 접근 가능
-                        .anyRequest().authenticated()
+                        .requestMatchers("/login**", "/error**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 )
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/users/login") // 사용자 정의 로그인 페이지 경로
-                        .permitAll() // 로그인 페이지는 모두 접근 가능
-                )
+                // .formLogin(formLogin -> formLogin
+                //         .loginPage("/users/login") // 사용자 정의 로그인 페이지 경로
+                //         .permitAll() // 로그인 페이지는 모두 접근 가능
+                // )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .invalidateHttpSession(true)
