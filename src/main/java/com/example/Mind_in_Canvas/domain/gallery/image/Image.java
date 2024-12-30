@@ -2,15 +2,13 @@ package com.example.Mind_in_Canvas.domain.gallery.image;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "image")
-@Getter @Setter
+@Getter 
 public class Image {
 
     @Id
