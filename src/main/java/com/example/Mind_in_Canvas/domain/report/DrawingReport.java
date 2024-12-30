@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.example.Mind_in_Canvas.domain.gallery.drawing.Drawing;
 
@@ -13,9 +14,11 @@ import com.example.Mind_in_Canvas.domain.gallery.drawing.Drawing;
 @Getter
 @Setter
 public class DrawingReport {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long DrawingReportId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID DrawingReportId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "drawing_id", nullable = false)

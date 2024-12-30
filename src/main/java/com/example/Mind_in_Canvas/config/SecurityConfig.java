@@ -70,7 +70,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 활성화 및 설정
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/register").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/users/signup").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/login**", "/error**").permitAll()// /error 경로는 누구나 접근 가능
                         .anyRequest().authenticated()

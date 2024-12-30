@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.0'
+	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -44,10 +44,8 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // for JSON processing
 
-
 	// Jakarta Validation API
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
-
 
 	implementation 'mysql:mysql-connector-java:8.0.29'  // 버전은 최신 버전으로 설정
 }
