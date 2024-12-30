@@ -1,6 +1,5 @@
 package com.example.Mind_in_Canvas.dto.canvas;
 
-import com.example.Mind_in_Canvas.domain.canvas.Canvas;
 import lombok.Builder;
 import lombok.Getter;
 

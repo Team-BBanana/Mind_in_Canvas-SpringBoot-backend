@@ -2,6 +2,7 @@ package com.example.Mind_in_Canvas.domain.gallery.image;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.w3c.dom.Text;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -45,4 +46,12 @@ public class Image {
     public void setIsDeleted(boolean b) {
         isDeleted = b;
     }
+    
+    public static Image createImage(String generatedBackground, String promptUsed) {
+        Image image = new Image();
+        image.imageUrl = generatedBackground;
+        image.promptUsed = promptUsed;
+        return image;
+    }
+
 }
