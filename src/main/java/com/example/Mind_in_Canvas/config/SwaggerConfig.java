@@ -26,6 +26,7 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("User Controller API")  // 그룹 이름을 설정합니다.
                 .pathsToMatch("/users/**")  // 문서화할 경로를 설정합니다.
+                .pathsToMatch("/api/**")
                 .build();
     }
 
