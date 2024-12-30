@@ -28,8 +28,8 @@ public class CustomOidcLogoutSuccessHandler implements LogoutSuccessHandler {
 
         System.out.println("Logout successful");
         response.setHeader("Authorization", "");
-        response.sendRedirect("http://localhost:62885/login");
-//        response.getWriter().write("로그아웃 성공");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"message\":\"Logout Success\"}");          
 
         this.delegate.onLogoutSuccess(request,response,authentication);
 

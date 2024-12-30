@@ -81,11 +81,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessHandler(customOidcLogoutSuccessHandler)
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID")
-                        .deleteCookies("jwt")
-                        .permitAll()
+                        .invalidateHttpSession(true)      // 세션 무효화
+                        .clearAuthentication(true)        // 인증 정보 지우기
+                        .deleteCookies("JSESSIONID")      // JSESSIONID 쿠키 삭제
+                        .deleteCookies("jwt")             // JWT 쿠키 삭제
+                        .permitAll()                      // 모든 사용자에게 로그아웃 URL 허용
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(customAuthenticationEntryPoint)  // 인증 실패 시 처리

@@ -1,7 +1,6 @@
 package com.example.Mind_in_Canvas.domain.gallery;
 
 import com.example.Mind_in_Canvas.dto.gallery.AiEnhancementResponse;
-import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.dto.gallery.GalleryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
