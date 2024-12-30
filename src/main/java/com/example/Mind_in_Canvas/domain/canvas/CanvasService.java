@@ -12,6 +12,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +26,16 @@ public class CanvasService {
 
     private final CanvasRepository canvasRepository;
     private final KidRepository kidRepository;
+    private final WebClient webClient;
 
     @Value("${AI_SERVER_URL}")
     private String aiServerUrl;
 
-    public CanvasService(CanvasRepository canvasRepository, KidRepository kidRepository) {
+    public CanvasService(CanvasRepository canvasRepository, KidRepository kidRepository, WebClient webClient) {
         this.canvasRepository = canvasRepository;
         this.kidRepository = kidRepository;
+        this.webClient = webClient;
+
     }
 
     // 새 캔버스에 그림 그리기
@@ -81,9 +86,22 @@ public class CanvasService {
         return new ContinueDrawingResponse(imageUrl);
     }
 
-    public AnalyzeDrawingResponse analyzeDrawing(AnalyzeDrawingRequest request) {
-        // AI 서버와 통신하여 분석 결과를 받아오는 로직 추가
-        String aiServerUrl = "AI_SERVER_URL/analyze"; // 실제 URL로 변경 필요
-        return restTemplate.postForObject(aiServerUrl, request, AnalyzeDrawingResponse.class);
+    public Mono<ResponseEntity<AnalyzeDrawingResponse>> sendToAiServer(AnalyzeDrawingRequest requestBody) {
+        return webClient.post()
+                .uri("/analyze")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(AnalyzeDrawingResponse.class)
+                .map(ResponseEntity::ok)
+                .onErrorResume(error -> {
+                    if (error instanceof WebClientResponseException) {
+                        log.error("AI 서버 통신 오류: {}", error.getMessage(), error);
+                    } else {
+                        log.error("예상치 못한 오류: {}", error.getMessage(), error);
+                    }
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                });
     }
+
 }

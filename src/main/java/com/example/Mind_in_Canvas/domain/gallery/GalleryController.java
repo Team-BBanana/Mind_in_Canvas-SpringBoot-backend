@@ -1,7 +1,6 @@
 package com.example.Mind_in_Canvas.domain.gallery;
 
 import com.example.Mind_in_Canvas.dto.gallery.AiEnhancementResponse;
-import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.dto.gallery.GalleryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +33,7 @@ public class GalleryController {
         return galleryService.hideImage(imageId);
     }
 
-    @PostMapping("/{imageId}/ai")
+    @PostMapping("/{drawingId}/ai")
     public ResponseEntity<AiEnhancementResponse> getEnhancedImage(
             @PathVariable UUID drawingId,
             @AuthenticationPrincipal UserDetails userDetails) {
