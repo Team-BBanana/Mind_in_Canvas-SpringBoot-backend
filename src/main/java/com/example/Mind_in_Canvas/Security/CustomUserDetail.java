@@ -1,6 +1,7 @@
 package com.example.Mind_in_Canvas.Security;
 
-import com.example.Mind_in_Canvas.domain.user.UserEntity;
+import com.example.Mind_in_Canvas.domain.user.parent.User;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,9 +10,9 @@ import java.util.Collections;
 
 public class CustomUserDetail implements UserDetails {
 
-    private final UserEntity userEntity;
+    private final User userEntity;
 
-    public CustomUserDetail(UserEntity userEntity) {
+    public CustomUserDetail(User userEntity) {
         this.userEntity = userEntity;
     }
 

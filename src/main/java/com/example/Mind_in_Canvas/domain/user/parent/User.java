@@ -1,31 +1,42 @@
-package com.example.Mind_in_Canvas.domain.user;
-
-
+package com.example.Mind_in_Canvas.domain.user.parent;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
+@Table(name = "parent")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
-public class UserEntity {
+public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID parentId;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
-    private String role;
+
+//    @Column(nullable = true, columnDefinition = "INT(6) ZEROFILL")
+//    private String pinNumber;
+
+    private String role = "ROLE_USER";
+
     private String socialProvider;
+
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
     private String phoneNumber; // 전화번호
 
@@ -88,4 +99,10 @@ public class UserEntity {
         }
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
+
+

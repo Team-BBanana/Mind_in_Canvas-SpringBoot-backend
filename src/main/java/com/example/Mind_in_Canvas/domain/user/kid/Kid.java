@@ -1,23 +1,31 @@
-package com.example.Mind_in_Canvas.domain.user;
+package com.example.Mind_in_Canvas.domain.user.kid;
 
+import com.example.Mind_in_Canvas.domain.user.parent.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "kid")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Kid {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long kidId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID kidId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
-    private Parent parent;
+    private User parent;
 
     @Column(nullable = false)
     private String name;
@@ -30,7 +38,7 @@ public class Kid {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Kid(Parent parent, String kidName, int kidAge) {
+    public Kid(User parent, String kidName, int kidAge) {
         // 엄마 등록
         this.parent = parent;
         this.name = kidName;

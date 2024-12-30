@@ -1,6 +1,6 @@
 package com.example.Mind_in_Canvas.Security;
 
-import com.example.Mind_in_Canvas.domain.user.UserRepository;
+import com.example.Mind_in_Canvas.domain.user.parent.UserRepository;
 import com.example.Mind_in_Canvas.shared.exceptions.CustomUsernameNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,10 @@ public class CustomerUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .map(userData -> {
-
                     userData.setUsername(userData.getEmail());
                     return new CustomUserDetail(userData);
                 })
                 .orElseThrow(() -> new CustomUsernameNotFoundException(username));
-
-    }
+    } 
 
 }

@@ -1,25 +1,29 @@
-package com.example.Mind_in_Canvas.domain.user;
+package com.example.Mind_in_Canvas.domain.user.parent;
 
 import com.example.Mind_in_Canvas.dto.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:62885")
-@Controller
+@RestController
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/users")
 public class UserController {
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     private UserService userService;
 
     @PostMapping("/register")

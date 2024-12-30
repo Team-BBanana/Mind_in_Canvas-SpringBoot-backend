@@ -1,22 +1,25 @@
-package com.example.Mind_in_Canvas.domain.gallery;
+package com.example.Mind_in_Canvas.domain.gallery.drawing;
 
 import com.example.Mind_in_Canvas.domain.canvas.Canvas;
+import com.example.Mind_in_Canvas.domain.gallery.image.Image;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "drawing")
-@Getter @Setter
+@Getter
 public class Drawing {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long drawingId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID drawingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "canvas_id", nullable = false)
+    @JoinColumn(name = "canvas_id", columnDefinition = "BINARY(16)")
     private Canvas canvas;
 
     @OneToOne(fetch = FetchType.LAZY)
