@@ -1,6 +1,8 @@
 package com.example.Mind_in_Canvas.domain.user.kid;
 
 import com.example.Mind_in_Canvas.domain.user.parent.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
