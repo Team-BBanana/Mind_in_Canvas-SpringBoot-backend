@@ -1,23 +1,15 @@
 package com.example.Mind_in_Canvas.domain.canvas;
 
 import com.example.Mind_in_Canvas.dto.canvas.*;
-import com.example.Mind_in_Canvas.shared.ApiResponse;
-import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
-import com.example.Mind_in_Canvas.shared.exceptions.InternalServerException;
 import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController

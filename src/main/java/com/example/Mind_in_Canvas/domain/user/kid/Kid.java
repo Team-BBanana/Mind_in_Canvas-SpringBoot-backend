@@ -24,6 +24,7 @@ public class Kid {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
+    @JsonIgnore
     private User parent;
 
     @Column(nullable = false)
