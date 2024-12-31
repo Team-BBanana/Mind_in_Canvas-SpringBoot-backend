@@ -1,7 +1,9 @@
 package com.example.Mind_in_Canvas.domain.user.parent;
+import com.example.Mind_in_Canvas.domain.user.kid.Kid;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +11,7 @@ import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +20,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 public class User {
 
     @Id
@@ -56,6 +58,9 @@ public class User {
     private boolean accountNonLocked; // 계정 잠금 여부
     private boolean credentialsNonExpired; // 자격 증명(비밀번호) 만료 여부
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Kid> kids;
 
     // 엔티티가 처음 생성될 때 createdAt과 updatedAt을 설정
     @PrePersist

@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KidDTO {
-
     private String name;
     private Integer age;
 }

@@ -2,18 +2,11 @@ package com.example.Mind_in_Canvas.domain.user.kid;
 
 import com.example.Mind_in_Canvas.domain.user.parent.User;
 import com.example.Mind_in_Canvas.domain.user.parent.UserRepository;
-import com.example.Mind_in_Canvas.dto.user.UpdateKidReqDto;
-import com.example.Mind_in_Canvas.dto.user.UpdateKidResDto;
 import com.example.Mind_in_Canvas.shared.utils.JwtTokenProvider;
-
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class KidService {
@@ -50,11 +43,14 @@ public class KidService {
         }
 
         String userEmail = jwtTokenProvider.getUsername(token);
+        User user = userRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + userEmail));
+        
         if (userEmail == null) {
             throw new IllegalArgumentException("Invalid token: unable to extract email");
         }
 
-        List<Kid> kids = kidRepository.findAllByParentEmail(userEmail);
+        List<Kid> kids = kidRepository.findAllByParent_ParentId(user.getParentId());
         if (kids.isEmpty()) {
             throw new IllegalArgumentException("No kids found for the given user");
         }

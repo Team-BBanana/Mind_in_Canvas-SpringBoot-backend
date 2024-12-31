@@ -1,8 +1,9 @@
 package com.example.Mind_in_Canvas.domain.user.kid;
 
 import com.example.Mind_in_Canvas.domain.user.parent.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,8 @@ public class Kid {
     @Column(columnDefinition = "BINARY(16)")
     private UUID kidId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "parentId", nullable = false)
     private User parent;
 
     @Column(nullable = false)
@@ -31,23 +32,19 @@ public class Kid {
 
     private Integer age;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Kid(User parent, String kidName, Integer kidAge) {
-        // 엄마 등록
-        this.parent = parent;
-        this.name = kidName;
-        this.age = kidAge;
-    }
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Kid(User parent, String kidName, Integer kidAge) {
+        this.parent = parent;
+        this.name = kidName;
+        this.age = kidAge;
     }
 
     @PreUpdate
@@ -55,13 +52,4 @@ public class Kid {
         updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public Kid(UUID kidId, User parent, String name, Integer age, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.kidId = kidId;
-        this.parent = parent;
-        this.name = name;
-        this.age = age;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }
