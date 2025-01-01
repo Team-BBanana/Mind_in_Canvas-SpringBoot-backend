@@ -71,6 +71,7 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
             cookie.setHttpOnly(true); // 보안상 true로 설정하는 것이 좋음
             cookie.setSecure(false);    // HTTPS에서만 사용하도록 설정하려면 true로 설정
             cookie.setPath("/");
+            cookie.setDomain("localhost");
             response.addCookie(cookie);
     
             response.setContentType("application/json");

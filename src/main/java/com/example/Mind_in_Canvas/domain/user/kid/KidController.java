@@ -6,22 +6,40 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.Mind_in_Canvas.dto.ErrorResponse;
 import com.example.Mind_in_Canvas.dto.user.KidDTO;
-import com.example.Mind_in_Canvas.domain.canvas.CanvasService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/kids")
 public class KidController {
 
     private final KidService kidService;
-    private final CanvasService canvasService;
 
     @Autowired
-    public KidController(KidService kidService, CanvasService canvasService) {
+    public KidController(KidService kidService) {
         this.kidService = kidService;
-        this.canvasService = canvasService;
+    }
+
+    @PostMapping("/generateKidToken")
+    public ResponseEntity<?> generateKidToken(@CookieValue(value = "jwt", required = false) String token, @RequestBody Map<String, String> requestBody, HttpServletResponse response) {
+        try {
+            String kidId = requestBody.get("kidId");
+            String kidToken = kidService.generateKidToken(token, kidId);
+            Cookie cookie = new Cookie("kidjwt", kidToken);
+            cookie.setHttpOnly(true); // 보안상 true로 설정하는 것이 좋음
+            cookie.setSecure(false);  // HTTPS에서만 사용하도록 설정하려면 true로 설정
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(kidToken);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse("Conflict", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        }
     }
 
     @PostMapping("/signup")

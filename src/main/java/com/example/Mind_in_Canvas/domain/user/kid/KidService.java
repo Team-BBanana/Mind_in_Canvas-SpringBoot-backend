@@ -7,6 +7,8 @@ import com.example.Mind_in_Canvas.dto.user.UpdateKidResDto;
 import com.example.Mind_in_Canvas.shared.utils.JwtTokenProvider;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,18 @@ public class KidService {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
     }
+
+    public String generateKidToken(String token, String kidId) {
+        List<String> userRole = jwtTokenProvider.getUserRole(token);
+        if (!userRole.contains("ROLE_USER")) {
+            throw new IllegalArgumentException("User is not a parent");
+        }
+
+        String kidToken = jwtTokenProvider.createToken(kidId, userRole);
+
+        return kidToken;
+    }
+
 
     public void createKid(String name, Integer age, String token) {
         if (token == null || token.isEmpty()) {

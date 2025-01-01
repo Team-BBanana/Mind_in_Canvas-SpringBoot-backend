@@ -41,6 +41,17 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
+    public List<String> getUserRole(String token) {
+        List<String> roles = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles", List.class);
+
+        return roles;
+    }
+
     // JWT 유효성 검증
     public boolean validateToken(String token) {
         try {

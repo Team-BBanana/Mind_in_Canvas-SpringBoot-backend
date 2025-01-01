@@ -2,15 +2,11 @@ package com.example.Mind_in_Canvas.dto.canvas;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
-import java.util.UUID;
-
-@Data @Builder
+@Getter
 public class CreateCanvasRequest {
 
-    private UUID robotId;
-    private String kidName;
-    private int kidAge;
-//    private UUID canvasId;
+    private String title;
 
 }
