@@ -1,17 +1,18 @@
 package com.example.Mind_in_Canvas.dto.canvas;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateCanvasResponse {
 
-    private UUID canvasId;
     private String status;
-    private LocalDateTime createdAt;
-
+    private String redirect_url;
+    private String initial_audio;
+    private String initial_text;
 }

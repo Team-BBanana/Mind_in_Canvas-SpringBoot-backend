@@ -5,7 +5,6 @@ import com.example.Mind_in_Canvas.domain.gallery.image.Image;
 import com.example.Mind_in_Canvas.domain.gallery.image.ImageRepository;
 import com.example.Mind_in_Canvas.domain.user.kid.Kid;
 import com.example.Mind_in_Canvas.domain.user.kid.KidRepository;
-import com.example.Mind_in_Canvas.domain.user.parent.User;
 import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.dto.gallery.DrawingResponse;
 import com.example.Mind_in_Canvas.shared.exceptions.ExternalServerException;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -31,7 +31,6 @@ public class CanvasService {
 
     private final CanvasRepository canvasRepository;
     private final KidRepository kidRepository;
-    private final WebClient webClient;
     private final DrawingRepository drawingRepository;
     private final ImageRepository imageRepository;
     private final DrawingWebSocketHandler drawingWebSocketHandler;
@@ -39,45 +38,53 @@ public class CanvasService {
     @Value("${AI_SERVER_URL}")
     private String aiServerUrl;
 
+    private final WebClient webClient = WebClient.builder()
+        .exchangeStrategies(ExchangeStrategies.builder()
+            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024)) // 10MB로 설정
+            .build())
+        .build();
+
     // 새 캔버스에 그림 그리기
     @Transactional
-    public CreateCanvasResponse createCanvas(UUID kidId) {
-        Kid kid = kidRepository.findById(kidId)
+    public CreateCanvasResponse createCanvas(String kidId, String title) {
+        Kid kid = kidRepository.findById(UUID.fromString(kidId))
                 .orElseThrow(() -> new ResourceNotFoundException("Kid not found"));
-        User parent = kidRepository.findParentByKidId(kidId);
 
+        // Create a new Canvas entity
+        Canvas canvas = Canvas.builder()
+                .kid(kid)
+                .title(title)
+                .build();
+        canvasRepository.save(canvas);
+
+        System.out.println("canvas: " + canvas.getCanvasId());
+
+        // Prepare the request body
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("robot_id", parent.getRobotId());
+        requestBody.put("robot_id", "1234");
+        requestBody.put("canvas_id", canvas.getCanvasId().toString());
         requestBody.put("name", kid.getName());
         requestBody.put("age", kid.getAge());
 
-        // HTTP 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
+        // Send the request to the external service
         try {
-            WebClient webClient = WebClient.create(aiServerUrl);
             CreateCanvasResponse response = webClient.post()
-                .uri("/drawing/new")
-                .headers(httpHeaders -> httpHeaders.addAll(requestEntity.getHeaders()))
-                .bodyValue(Objects.requireNonNull(requestEntity.getBody()))
+                .uri("http://localhost:8081/drawing/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(CreateCanvasResponse.class)
                 .block();
 
-            // 응답 상태 확인
             if (response.getStatus().equals("error")) {
-                throw new ExternalServerException("로봇 호출 실패");
+                throw new ExternalServerException("Failed to call external service");
             }
 
-            Canvas canvas = Canvas.createCanvas(kid);
-            canvasRepository.save(canvas);
             return response;
 
         } catch (Exception e) {
-            log.error("AI 서버 통신 중 오류 발생", e);
-            throw new ExternalServerException("AI 서버와 통신 중 오류가 발생했습니다.");
+            log.error("Error communicating with external service", e);
+            throw new ExternalServerException("Error communicating with external service");
         }
     }
 

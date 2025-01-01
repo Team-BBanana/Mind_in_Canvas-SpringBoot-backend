@@ -29,7 +29,8 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private String frontendUrl = "http://localhost:5173/selectkids";
+    private String frontendUrl = "http://localhost:5173";
+    private String endPoint = "/selectkids";
 
     // Constructor injection
     public CustomOauthSuccessHandler(UserDetailsService userDetailService, JwtTokenProvider jwtTokenProvider) {
@@ -74,9 +75,9 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
     
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK); // 302 OK
-            System.out.println("프론트엔드 루트 URL로 리디렉션 : " + frontendUrl);
+            System.out.println("프론트엔드 루트 URL로 리디렉션 : " + frontendUrl + endPoint);
             // 프론트엔드 루트 URL로 리디렉션
-            response.sendRedirect(frontendUrl);
+            response.sendRedirect(frontendUrl + endPoint);
 
         }catch (UsernameNotFoundException ex){
             handleException(response, ex.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);

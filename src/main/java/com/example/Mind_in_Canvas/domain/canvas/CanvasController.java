@@ -1,5 +1,6 @@
 package com.example.Mind_in_Canvas.domain.canvas;
 
+import com.example.Mind_in_Canvas.dto.ErrorResponse;
 import com.example.Mind_in_Canvas.dto.canvas.*;
 import com.example.Mind_in_Canvas.shared.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/canvas")
+@RequestMapping("/canvas")
 @Slf4j
 public class CanvasController {
 
@@ -27,21 +29,18 @@ public class CanvasController {
         this.canvasService = canvasService;
     }
 
-    //프론트 에서 캔버스 생성 요청 받아서 캔버스 생성
-    @PostMapping("/new/{kidId}")
-    public ResponseEntity<CreateCanvasResponse> createCanvas(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable UUID kidId
-    ) {
-        log.info("Create new canvas request for kidId: {}", kidId);
+   @PostMapping("/createCanvas")
+    public ResponseEntity<?> createCanvas(@RequestBody Map<String, String> requestBody) {
         try {
-            CreateCanvasResponse response = canvasService.createCanvas(kidId);
-            return ResponseEntity.ok(response);
+            String kidId = requestBody.get("kidId");
+            String title = requestBody.get("title");
+            // Create a new canvas and send a request to the external service
+            CreateCanvasResponse res =  canvasService.createCanvas(kidId,title);
+
+            return ResponseEntity.ok(res);
         } catch (Exception e) {
-            log.error("Failed to create canvas: ", e);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            ErrorResponse errorResponse = new ErrorResponse("Error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

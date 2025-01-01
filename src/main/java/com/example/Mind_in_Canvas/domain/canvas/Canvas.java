@@ -2,7 +2,10 @@ package com.example.Mind_in_Canvas.domain.canvas;
 
 import com.example.Mind_in_Canvas.domain.enums.CanvasStatus;
 import com.example.Mind_in_Canvas.domain.user.kid.Kid;
+import com.example.Mind_in_Canvas.domain.user.parent.User;
+
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -24,9 +27,6 @@ public class Canvas {
 
     private String title;
 
-    @Enumerated(EnumType.STRING)
-    private CanvasStatus status;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -35,8 +35,6 @@ public class Canvas {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
@@ -45,11 +43,12 @@ public class Canvas {
     }
 
 
-    public static Canvas createCanvas(Kid kid) {
-        Canvas canvas = new Canvas();
-        canvas.kid = kid;
-        canvas.status = CanvasStatus.NEW;
-        return canvas;
+    @Builder
+    public Canvas(Kid kid, String title) {
+        this.kid = kid;
+        this.title = title;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
 }
