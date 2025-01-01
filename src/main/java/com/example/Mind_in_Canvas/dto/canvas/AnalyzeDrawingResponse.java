@@ -1,25 +1,30 @@
 package com.example.Mind_in_Canvas.dto.canvas;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class AnalyzeDrawingResponse {
-    private int status; // 응답 상태 코드
-    private Data data;  // 응답 데이터
+  private String status;
+  private String canvasId;
+  private String imageUrl;
+  private String analysis;
+  private String summary;
+  private List<String> conversationHistory;
+  private String backgroundImage;
+  private String drawingName;
 
-    @Getter
-    @Setter
-    public static class Data {
-        private String drawingId; // UUID 형식의 그림 ID
-        private AiFeedback aiFeedback; // AI 피드백
-
-        @Getter
-        @Setter
-        public static class AiFeedback {
-            private String text; // AI 텍스트 답변
-            private String audio; // TTS로 변환된 음성 데이터
-        }
-    }
+  public AnalyzeDrawingResponse(String canvasId, String imageUrl, String status, String analysis, String summary, List<String> conversationHistory, String backgroundImage, String drawingName) {
+    this.canvasId = canvasId;
+    this.imageUrl = imageUrl;
+    this.status = status;
+    this.analysis = analysis;
+    this.summary = summary;
+    this.conversationHistory = conversationHistory;
+    this.backgroundImage = backgroundImage;
+    this.drawingName = drawingName;
+  }
 }

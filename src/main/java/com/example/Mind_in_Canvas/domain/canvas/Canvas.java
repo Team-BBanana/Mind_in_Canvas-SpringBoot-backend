@@ -7,13 +7,15 @@ import com.example.Mind_in_Canvas.domain.user.parent.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "canvas")
-@Getter 
+@Getter
+@NoArgsConstructor
 public class Canvas {
 
     @Id
@@ -27,14 +29,16 @@ public class Canvas {
 
     private String title;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    private CanvasStatus status;
 
-    @Column(name = "updated_at")
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
@@ -42,13 +46,12 @@ public class Canvas {
         updatedAt = LocalDateTime.now();
     }
 
-
     @Builder
     public Canvas(Kid kid, String title) {
         this.kid = kid;
         this.title = title;
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        this.status = CanvasStatus.NEW;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
-
 }

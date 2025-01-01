@@ -2,7 +2,8 @@ package com.example.Mind_in_Canvas.domain.gallery.image;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.w3c.dom.Text;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,6 +11,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "image")
 @Getter
+@Setter
+@NoArgsConstructor
 public class Image {
 
     @Id
@@ -17,7 +20,6 @@ public class Image {
     @Column(columnDefinition = "BINARY(16)")
     private UUID imageId;
 
-    @Column(nullable = false)
     private String imageUrl;
 
     @Column(columnDefinition = "TEXT")

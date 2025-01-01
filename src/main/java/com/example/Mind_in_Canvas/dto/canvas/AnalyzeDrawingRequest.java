@@ -1,14 +1,19 @@
 package com.example.Mind_in_Canvas.dto.canvas;
-
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.UUID;
 
 @Getter
-@Data @Builder
+@NoArgsConstructor
 public class AnalyzeDrawingRequest {
-    private UUID canvasId;
-    private String base64Img;
+    private String canvas_id;
+    private String image_url;
+    private String objectPositions; // New field for object positions
+
+
+    public AnalyzeDrawingRequest(String canvasId, String imageUrl, String objectPositions) {
+        this.canvas_id = canvasId;
+        this.image_url = imageUrl;
+        this.objectPositions = objectPositions;
+    }
 }
