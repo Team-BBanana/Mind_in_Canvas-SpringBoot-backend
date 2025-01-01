@@ -43,9 +43,11 @@ public class CanvasService {
     @Transactional
     public CreateCanvasResponse createCanvas(String token, String title) {
         String kidId = jwtTokenProvider.getUsername(token);
-        
+
         Kid kid = kidRepository.findById(UUID.fromString(kidId))
                 .orElseThrow(() -> new ResourceNotFoundException("Kid not found"));
+
+        System.out.println("kid: " + kid.getKidId());
 
         // Create a new Canvas entity
         Canvas canvas = Canvas.builder()

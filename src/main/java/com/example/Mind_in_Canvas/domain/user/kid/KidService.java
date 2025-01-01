@@ -2,20 +2,13 @@ package com.example.Mind_in_Canvas.domain.user.kid;
 
 import com.example.Mind_in_Canvas.domain.user.parent.User;
 import com.example.Mind_in_Canvas.domain.user.parent.UserRepository;
-import com.example.Mind_in_Canvas.dto.user.UpdateKidReqDto;
-import com.example.Mind_in_Canvas.dto.user.UpdateKidResDto;
 import com.example.Mind_in_Canvas.shared.utils.JwtTokenProvider;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class KidService {
